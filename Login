@@ -1,0 +1,161 @@
+##HTML:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <style>
+        body {
+            font-family: 'Arial';
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #d1e8e4; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            max-width: 600px; 
+            background: rgba(211, 211, 211, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Times New Roman';
+            text-align: center;
+            color: darkblue;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        input {
+            width: 580px; 
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 600px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4a4e69; 
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #22223b;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        a {
+            color: #4a4e69; 
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline; 
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Login</h1>
+        
+        <form action="Login.php" method="POST" autocomplete="off" onsubmit="return validateLoginForm()">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" placeholder="Username" required autocomplete="new-username">
+
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" placeholder="Password" required autocomplete="new-password">
+
+            <button type="submit">Login</button>
+            <p>Forgot password? <a href="ResetPass.html">Reset here</a></p>
+            <p>Not registered? <a href="Registration.html">Register here</a></p>
+        </form>
+    </div>
+</body>
+</html>
+
+
+##PHP:
+
+<?php
+session_start();
+
+// Database credentials
+$servername = "localhost"; 
+$dbUsername = "root"; 
+$dbPassword = ""; 
+$dbname = "user_management"; // Changed database name
+
+// Create a database connection
+$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+
+    $sql = "SELECT id, password FROM users WHERE username = ?"; // Changed table name
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        error_log("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+        exit;
+    }
+
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if (password_verify($password, $row['password'])) {
+            // Set the session variable for user ID
+            $_SESSION['userId'] = $row['id']; // Set user ID in session
+            echo "<script>
+                    alert('Login successful! Redirecting to the calculator.');
+                    setTimeout(() => { window.location.href = 'Calculator.html'; }, 100);
+                  </script>"; 
+        } else {
+            echo "<script>
+                    alert('Incorrect password. Please try again.');
+                    window.history.back();
+                  </script>"; 
+        }
+    } else {
+        echo "<script>
+                alert('Username not found. Please register.');
+                window.history.back();
+              </script>"; 
+    }
+
+    $stmt->close();
+}
+$conn->close();
+?>
