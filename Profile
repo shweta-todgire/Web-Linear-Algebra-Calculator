@@ -1,0 +1,282 @@
+##PHP & HTML
+
+<?php
+session_start();
+
+// Database credentials
+$servername = "localhost"; 
+$dbUsername = "root"; 
+$dbPassword = ""; 
+$dbname = "user_management"; 
+
+// Create a database connection
+$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check if the user is logged in
+if (!isset($_SESSION['userId'])) {
+    header("Location: Login.html");
+    exit();
+}
+
+// Get user ID from the session
+$userId = $_SESSION['userId'];
+
+// Fetch user data
+$sql = "SELECT name, username, email, phone FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $userData = $result->fetch_assoc();
+} else {
+    echo "<script>alert('User data not found!'); window.location.href='Login.html';</script>";
+    exit();
+}
+$stmt->close();
+
+// Handle update if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $newName = trim($_POST['name'] ?? '');
+    $newUsername = trim($_POST['username'] ?? '');
+    $newEmail = trim($_POST['email'] ?? '');
+    $newPhone = trim($_POST['phone'] ?? '');
+
+    $updateSql = "UPDATE users SET name = ?, username = ?, email = ?, phone = ? WHERE id = ?";
+    $updateStmt = $conn->prepare($updateSql);
+    
+    if ($updateStmt) {
+        $updateStmt->bind_param("sssii", $newName, $newUsername, $newEmail, $newPhone, $userId);
+        $updateStmt->execute();
+        if ($updateStmt->affected_rows > 0) {
+            echo "<script>alert('Profile updated successfully!');</script>";
+            // Refresh the user data after update
+            $userData['name'] = $newName;
+            $userData['username'] = $newUsername;
+            $userData['email'] = $newEmail;
+            $userData['phone'] = $newPhone;
+        } else {
+            echo "<script>alert('No changes made or update failed.');</script>";
+        }
+        $updateStmt->close();
+    } else {
+        echo "<script>alert('Update preparation failed.');</script>";
+    }
+}
+
+// Handle logout
+if (isset($_POST['logout'])) {
+    session_destroy();
+    header("Location: Login.html");
+    exit();
+}
+
+// Close the connection
+$conn->close(); 
+?>
+
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: 'Arial';
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #d1e8e4; /* Light teal background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            width: 600px; 
+            background: rgba(211, 211, 211, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+
+        .profile-image-container {
+            margin-bottom: 5px;
+            text-align: center; 
+        }
+
+        .profile-image {
+            border-radius: 50%; 
+            width: 150px; 
+            height: 150px; 
+            object-fit: cover; 
+        }
+
+        .profile-info {
+            padding: 20px;
+            text-align: left;
+            width: 100%; 
+        }
+
+        p {
+            margin: 20px 0;
+            font-size: 20px;
+        }
+
+        .edit-form {
+            display: none;
+            width: 100%;
+            text-align: left; 
+        }
+
+        button {
+            width: 150px;
+            font-size: 18px;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #4a4e69;
+            color: white;
+            cursor: pointer;
+            margin-top: 5px; 
+        }
+
+        button:hover {
+            background-color: #22223b;
+        }
+
+        .link {
+            font-size: 20px;
+            color: #4a4e69; /* Dark gray-blue */
+            text-decoration: none;
+            margin-top: 5px;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: darkblue;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-family: 'Times New Roman';
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc; 
+            margin-bottom: 10px; 
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+            width: 100%; 
+        }
+
+        .inline-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%; 
+            margin-top: 10px; 
+        }
+    </style>
+    <script>
+        function toggleEdit() {
+            const editForm = document.getElementById('editForm');
+            const profileInfo = document.getElementById('profileInfo');
+            const updateButton = document.getElementById('updateButton');
+            const editLink = document.getElementById('editLink');
+            const logoutButton = document.getElementById('logoutButton');
+            const deleteButton = document.getElementById('deleteAccountButton');
+            const backButton = document.getElementById('backButton');
+
+            if (editForm.style.display === 'none') {
+                editForm.style.display = 'block';
+                profileInfo.style.display = 'none';
+                updateButton.style.display = 'block'; 
+                editLink.style.display = 'none'; 
+                logoutButton.style.display = 'none'; 
+                deleteButton.style.display = 'none'; 
+                backButton.style.display = 'block'; 
+            } else {
+                editForm.style.display = 'none';
+                profileInfo.style.display = 'block';
+                updateButton.style.display = 'none';
+                editLink.style.display = 'inline-block'; 
+                logoutButton.style.display = 'inline-block'; 
+                deleteButton.style.display = 'inline-block'; 
+                backButton.style.display = 'none'; 
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div id="container">
+    <h1>Welcome, <?php echo htmlspecialchars($userData['name'] ?? 'Guest'); ?>!</h1>
+    
+    <div class="profile-image-container">
+        <img src="Profile_Img.png" alt="Profile Image" class="profile-image">
+    </div>
+    
+    <div class="profile-info" id="profileInfo">
+        <p><strong>Name:</strong> <span><?php echo htmlspecialchars($userData['name'] ?? 'N/A'); ?></span></p>
+        <p><strong>Phone Number:</strong> <span><?php echo htmlspecialchars($userData['phone'] ?? 'N/A'); ?></span></p>
+        <p><strong>Username:</strong> <span><?php echo htmlspecialchars($userData['username'] ?? 'N/A'); ?></span></p>
+        <p><strong>Email:</strong> <span><?php echo htmlspecialchars($userData['email'] ?? 'N/A'); ?></span></p>
+    </div>
+
+    <div class="button-container">
+        <a href="#" id="editLink" class="link" onclick="toggleEdit()" style="font-size: 18px;">Edit</a>
+    </div>
+
+    <br>
+
+    <div id="editForm" class="edit-form">
+        <h2>Edit Information</h2>
+        <form method="POST" action="">
+            <strong>Name:</strong> <input type="text" name="name" placeholder="New Name" value="<?php echo htmlspecialchars($userData['name'] ?? ''); ?>" required>
+            <strong>Phone Number:</strong> <input type="text" name="phone" placeholder="New Phone Number" value="<?php echo htmlspecialchars($userData['phone'] ?? ''); ?>" required>
+            <strong>Username:</strong> <input type="text" name="username" placeholder="New Username" value="<?php echo htmlspecialchars($userData['username'] ?? ''); ?>" required>
+            <strong>Email:</strong> <input type="text" name="email" placeholder="New Email" value="<?php echo htmlspecialchars($userData['email'] ?? ''); ?>" required>
+            <div class="inline-buttons">
+                <button type="submit" name="update" id="updateButton" style="display:none;">Update</button>
+                <button type="button" id="backButton" onclick="toggleEdit()" style="display:none;">Back</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="button-container">
+        <form method="POST" action="" style="display:inline;">
+            <button type="submit" name="logout" id="logoutButton">Logout</button>
+        </form>
+        <form method="GET" action="Delete.php" style="display:inline;">
+            <button type="submit" name="deleteAccount" id="deleteAccountButton">Delete Account</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
