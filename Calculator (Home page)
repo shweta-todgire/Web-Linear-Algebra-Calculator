@@ -1,0 +1,584 @@
+
+## LINEAR ALGEBRA CALCULATOR (COMPLEX NO., VECTORS, MATRICES)
+
+##HTML:
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Operations</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #d1e8e4;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4a4e69; 
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            color: white; 
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline; 
+        }
+
+        h1 {
+            text-align: center;
+            color: darkblue;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 700px; 
+            background: rgba(211, 211, 211, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .welcome-message {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .options button {
+	    width: 200px;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4a4e69; 
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .options button:hover {
+            background-color: #22223b; 
+        }
+
+        #About {
+            text-align: center;
+            font-size: 16px;
+            font-family: 'Times New Roman', serif;
+            color: white;
+            background-color: #4a4e69; 
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+	input, textarea {
+            font-family: Verdana;
+	    width: 600px;
+	    padding: 10px;
+	    margin-top: 5px;
+	    border-radius: 5px;
+	    border: 1px solid #ccc;
+	}
+
+	.hidden {
+	    display: none;
+	    margin: 10px;
+	    padding: 50px;
+	}
+
+	.result {
+	    font-family: Verdana;
+	    width: 600px;
+	    padding: 10px;
+	    margin-top: 5px;
+ 	    border-radius: 5px;
+	    border: 1px solid #ccc;
+            background-color: white;
+	}
+
+	button {
+	    width: 300px;
+	    padding: 10px;
+	    border: none;
+	    border-radius: 5px;
+	    background-color: #4a4e69;
+	    color: white;
+	    cursor: pointer;
+	    margin-bottom: 10px;
+	}
+
+	button:hover {
+	    background-color: #22223b;
+	}
+
+        img {
+            border-radius: 5px;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div style="display: flex; align-items: center;">
+            <a href="Calculator.html">Home</a>
+            <a href="#About">About Us</a>
+            <a href="#" onclick="logout()">Logout</a>
+            <a href="Profile.php">Profile</a>
+        </div>
+        <div style="text-align: center;">
+            <img src="Logo.jpg" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%;">
+            <br>
+            <b style="font-family: 'Dancing Script', cursive; font-size: 16px; color: #d3d3d3;">CalcFusion</b>
+        </div>
+    </nav>
+
+    <h1>Complex Number, Vectors And Matrice Calculator</h1>
+    <img src="Image1.jpg" alt="Image" height="120" width="500">
+    <br><br>
+
+    <div class="container">
+        <div class="welcome-message" id="welcome-message">
+            <b>Welcome! Please select an operation from the <br> navigation on the left.</b>
+        </div>
+        <div class="options">
+            <h2>Select Operation:</h2>
+            <button onclick="showSection('complex')">Complex Numbers</button>
+            <button onclick="showSection('vector')">Vectors</button>
+            <button onclick="showSection('matrix')">Matrices</button>
+        </div>
+        <br>
+        <div id="operation-container" class="operation-container"></div>
+        <div id="entry-boxes" class="hidden"></div>
+    </div>
+    
+    <script src="Calculator.js"></script>
+    
+    <br><br>
+    <div id="About">
+        <p>
+            Thank you for choosing our application!<br>
+            We are dedicated to providing a user-friendly platform for students. Our mission is to empower users <br>
+            by simplifying the understanding of complex mathematical concepts. <br>
+            With our application, users can easily perform calculations related to complex numbers, vectors, and matrices <br>
+            enabling them to focus on learning and applying mathematics effectively. <br>
+            Whether you're a student tackling your homework, a teacher looking for resources to assist your students, <br>
+            or a math enthusiast exploring new concepts, our calculator is designed to meet your needs.
+        </p>
+    </div>
+    <br><br>
+</body>
+</html>
+
+
+##JAVASCRIPT:
+function showSection(section) {
+    const entryBoxes = document.getElementById('entry-boxes');
+    entryBoxes.innerHTML = ''; 
+    const welcomeMessage = document.getElementById('welcome-message');
+    welcomeMessage.classList.add('hidden'); 
+
+    switch (section) {
+        case 'complex':
+            entryBoxes.innerHTML = `
+                <h2>Complex Number Operations</h2>
+                <h3>Conjugate</h3>
+                <input id="complex-input" type="text" placeholder="Enter complex number (a + bi)" /><br><br>
+                <button onclick="calculateConjugate()">Calculate Conjugate</button>
+                <div class="result" id="conjugate-result"></div>
+                <pre id="conjugate-steps"></pre>
+
+                <h3>Square Root</h3>
+                <button onclick="calculateSquareRoot()">Calculate Square Root</button>
+                <div class="result" id="sqrt-result"></div>
+
+                <h3>Modulus</h3>
+                <button onclick="calculateModulus()">Calculate Modulus</button>
+                <div class="result" id="modulus-result"></div>
+            `;
+            break;
+
+        case 'vector':
+            entryBoxes.innerHTML = `
+                <h2>Vector Operations</h2>
+                <h3>Vector Addition</h3>
+                <input id="vector1" type="text" placeholder="Enter Vector 1 (comma-separated)" />
+                <input id="vector2" type="text" placeholder="Enter Vector 2 (comma-separated)" /><br><br>
+                <button onclick="performVectorAddition()">Add Vectors</button>
+                <div class="result" id="vector-add-result"></div>
+                <pre id="vector-add-steps"></pre>
+
+                <h3>Vector Subtraction</h3>
+                <input id="vector3" type="text" placeholder="Enter Vector 1 (comma-separated)" />
+                <input id="vector4" type="text" placeholder="Enter Vector 2 (comma-separated)" /><br><br>
+                <button onclick="performVectorSubtraction()">Subtract Vectors</button>
+                <div class="result" id="vector-subtract-result"></div>
+                <pre id="vector-subtract-steps"></pre>
+
+                <h3>Dot Product</h3>
+                <input id="dot-vector1" type="text" placeholder="Enter Vector 1 (comma-separated)" />
+                <input id="dot-vector2" type="text" placeholder="Enter Vector 2 (comma-separated)" /><br><br>
+                <button onclick="performDotProduct()">Calculate Dot Product</button>
+                <div class="result" id="dot-result"></div>
+                <pre id="dot-steps"></pre>
+
+                <h3>Scalar Multiplication</h3>
+                <input id="scalar" type="number" placeholder="Enter Scalar" />
+                <input id="scalar-vector" type="text" placeholder="Enter Vector (comma-separated)" /><br><br>
+                <button onclick="performScalarMultiplication()">Multiply Vector by Scalar</button>
+                <div class="result" id="scalar-result"></div>
+                <pre id="scalar-steps"></pre>
+            `;
+            break;
+
+        case 'matrix':
+            entryBoxes.innerHTML = `
+                <h2>Matrix Operations</h2>
+                <h3>Matrix Multiplication</h3>
+                <textarea id="matrix1" placeholder="Enter Matrix 1 (comma-separated rows)" rows="1"></textarea>
+                <textarea id="matrix2" placeholder="Enter Matrix 2 (comma-separated rows)" rows="1"></textarea><br>
+                <button onclick="performMatrixMultiplication()">Multiply Matrices</button>
+                <div class="result" id="matrix-mul-result"></div>
+                <pre id="matrix-mul-steps"></pre>
+
+                <h3>Matrix Addition</h3>
+                <textarea id="matrix3" placeholder="Enter Matrix 1 (comma-separated rows)" rows="1"></textarea>
+                <textarea id="matrix4" placeholder="Enter Matrix 2 (comma-separated rows)" rows="1"></textarea><br>
+                <button onclick="performMatrixAddition()">Add Matrices</button>
+                <div class="result" id="matrix-add-result"></div>
+                <pre id="matrix-add-steps"></pre>
+
+                <h3>Determinant</h3>
+                <textarea id="det-matrix" placeholder="Enter matrix values (e.g., 1,2,3; 4,5,6; 7,8,9)" rows="1"></textarea><br>
+                <button onclick="calculateDeterminant()">Calculate Determinant</button>
+                <div class="result" id="determinant-result"></div>
+                <pre id="determinant-steps"></pre>
+
+                <h3>Inverse (n x n)</h3>
+                <textarea id="inverse-matrix" placeholder="Enter nxn Matrix (comma-separated rows)" rows="1"></textarea><br>
+                <button onclick="performMatrixInverse()">Find Inverse</button>
+                <div class="result" id="matrix-inverse-result"></div>
+                <pre id="matrix-inverse-steps"></pre>
+            `;
+            break;
+
+        default:
+            welcomeMessage.classList.remove('hidden'); 
+            break;
+    }
+
+    entryBoxes.classList.remove('hidden');
+}
+
+
+function parseComplexInput(input) {
+    const parts = input.match(/([-+]?\d*\.?\d+)([-+]\d*\.?\d+)i/);
+    if (!parts) return null;
+    return { real: parseFloat(parts[1]), imaginary: parseFloat(parts[2]) };
+}
+
+function calculateConjugate() {
+    const complex = parseComplexInput(document.getElementById('complex-input').value);
+    const steps = [];
+    if (!complex) {
+        document.getElementById('conjugate-result').innerText = 'Invalid complex number!';
+        return;
+    }
+    const result = `${complex.real} - ${Math.abs(complex.imaginary)}i`;
+    steps.push(`Given complex number: ${complex.real} + ${complex.imaginary}i`);
+    steps.push(`Conjugate: ${complex.real} - ${Math.abs(complex.imaginary)}i`);
+    document.getElementById('conjugate-result').innerText = `Conjugate: ${result}`;
+    document.getElementById('conjugate-steps').innerText = steps.join('\n');
+}
+
+function calculateSquareRoot() {
+    const complex = parseComplexInput(document.getElementById('complex-input').value);
+    if (!complex) {
+        document.getElementById('sqrt-result').innerText = 'Invalid complex number!';
+        return;
+    }
+
+    const r = Math.sqrt(Math.sqrt(complex.real ** 2 + complex.imaginary ** 2));
+    const theta = Math.atan2(complex.imaginary, complex.real) / 2;
+    const realPart = r * Math.cos(theta);
+    const imaginaryPart = r * Math.sin(theta);
+
+    const result = `${realPart.toFixed(2)} + ${imaginaryPart.toFixed(2)}i`;
+    document.getElementById('sqrt-result').innerText = `Square Root: ${result}`;
+}
+
+function calculateModulus() {
+    const complex = parseComplexInput(document.getElementById('complex-input').value);
+    if (!complex) {
+        document.getElementById('modulus-result').innerText = 'Invalid complex number!';
+        return;
+    }
+
+    const modulus = Math.sqrt(complex.real ** 2 + complex.imaginary ** 2);
+    document.getElementById('modulus-result').innerText = `Modulus: ${modulus.toFixed(2)}`;
+}
+
+        // Vector Operations
+        function performVectorAddition() {
+            const v1 = document.getElementById('vector1').value.split(',').map(Number);
+            const v2 = document.getElementById('vector2').value.split(',').map(Number);
+            const result = v1.map((val, index) => val + v2[index]);
+            const steps = [];
+
+            for (let i = 0; i < v1.length; i++) {
+                steps.push(`Adding element ${v1[i]} + ${v2[i]} = ${result[i]}`);
+            }
+
+            document.getElementById('vector-add-result').innerText = `Result: [${result}]`;
+            document.getElementById('vector-add-steps').innerText = steps.join('\n');
+        }
+
+        function performVectorSubtraction() {
+            const v1 = document.getElementById('vector3').value.split(',').map(Number);
+            const v2 = document.getElementById('vector4').value.split(',').map(Number);
+            const result = v1.map((val, index) => val - v2[index]);
+            const steps = [];
+
+            for (let i = 0; i < v1.length; i++) {
+                steps.push(`Subtracting element ${v1[i]} - ${v2[i]} = ${result[i]}`);
+            }
+
+            document.getElementById('vector-subtract-result').innerText = `Result: [${result}]`;
+            document.getElementById('vector-subtract-steps').innerText = steps.join('\n');
+        }
+
+function performDotProduct() {
+    const v1 = document.getElementById('dot-vector1').value.split(',').map(Number);
+    const v2 = document.getElementById('dot-vector2').value.split(',').map(Number);
+    const steps = [];
+
+    // Check if the vectors are of the same length
+    if (v1.length !== v2.length) {
+        document.getElementById('dot-result').innerText = 'Vectors must be of the same length!';
+        return;
+    }
+
+    const result = v1.reduce((sum, val, index) => {
+        const product = val * v2[index];
+        steps.push(`Step ${index + 1}: Multiplying ${val} * ${v2[index]} = ${product}`);
+        return sum + product;
+    }, 0);
+
+    steps.push(`Final Dot Product: ${result}`);
+    document.getElementById('dot-result').innerText = `Dot Product: ${result}`;
+    document.getElementById('dot-steps').innerText = steps.join('\n');
+}
+
+
+function performScalarMultiplication() {
+    const scalar = parseFloat(document.getElementById('scalar').value);
+    const vector = document.getElementById('scalar-vector').value.split(',').map(Number);
+    const result = vector.map(val => val * scalar);
+    const steps = [];
+
+    for (let i = 0; i < vector.length; i++) {
+        steps.push(`Step ${i + 1}: Multiplying ${vector[i]} by scalar ${scalar} = ${result[i]}`);
+    }
+
+    steps.push(`Final Result: [${result}]`);
+    document.getElementById('scalar-result').innerText = `Result: [${result}]`;
+    document.getElementById('scalar-steps').innerText = steps.join('\n');
+}
+
+
+        // Matrix Operations
+ function parseMatrix(input) {
+    return input.split(';').map(row => row.split(',').map(Number));
+}
+
+function performMatrixMultiplication() {
+    const matrix1 = parseMatrix(document.getElementById('matrix1').value);
+    const matrix2 = parseMatrix(document.getElementById('matrix2').value);
+    const result = [];
+    const steps = [];
+
+    const rows1 = matrix1.length;
+    const cols1 = matrix1[0].length;
+    const rows2 = matrix2.length;
+    const cols2 = matrix2[0].length;
+
+    if (cols1 !== rows2) {
+        document.getElementById('matrix-mul-result').innerText = 'Invalid dimensions for multiplication!';
+        return;
+    }
+
+    for (let i = 0; i < rows1; i++) {
+        result[i] = [];
+        for (let j = 0; j < cols2; j++) {
+            let sum = 0; // Initialize sum for this element
+            for (let k = 0; k < cols1; k++) {
+                const product = matrix1[i][k] * matrix2[k][j];
+                sum += product; // Add product to the sum
+                steps.push(`M(${i + 1},${k + 1}) * N(${k + 1},${j + 1}) = ${matrix1[i][k]} * ${matrix2[k][j]} = ${product}`);
+            }
+            result[i][j] = sum; // Store the computed sum in the result matrix
+            steps.push(`Sum for element [${i + 1}, ${j + 1}]: ${sum}`);
+        }
+    }
+   
+    // Create a more user-friendly output
+    const formattedResult = result.map(row => `[${row.join(', ')}]`).join(', ');
+    document.getElementById('matrix-mul-result').innerText = `Result: [${formattedResult}]`;
+   
+    // Simplified step output
+    document.getElementById('matrix-mul-steps').innerText = steps.join('\n');
+}
+
+
+function performMatrixAddition() {
+    const matrix1 = parseMatrix(document.getElementById('matrix3').value);
+    const matrix2 = parseMatrix(document.getElementById('matrix4').value);
+    const result = [];
+    const steps = [];
+
+    if (matrix1.length !== matrix2.length || matrix1[0].length !== matrix2[0].length) {
+        document.getElementById('matrix-add-result').innerText = 'Matrices must be of the same dimensions!';
+        return;
+    }
+
+    for (let i = 0; i < matrix1.length; i++) {
+        result[i] = [];
+        for (let j = 0; j < matrix1[0].length; j++) {
+            result[i][j] = matrix1[i][j] + matrix2[i][j];
+            steps.push(`Adding element [${i}, ${j}]: ${matrix1[i][j]} + ${matrix2[i][j]} = ${result[i][j]}`);
+        }
+    }
+
+    document.getElementById('matrix-add-result').innerText = `Result: ${JSON.stringify(result)}`;
+    document.getElementById('matrix-add-steps').innerText = steps.join('\n');
+}
+
+function calculateDeterminant() {
+    const matrix = parseMatrix(document.getElementById('det-matrix').value);
+    if (matrix.length !== matrix[0].length) {
+        document.getElementById('determinant-result').innerText = 'Matrix must be square!';
+        return;
+    }
+
+    const steps = [];
+    const determinant = getDeterminant(matrix, steps);
+    document.getElementById('determinant-result').innerText = `Determinant: ${determinant}`;
+    document.getElementById('determinant-steps').innerText = steps.join('\n');
+}
+
+function getDeterminant(matrix, steps) {
+    if (matrix.length === 1) {
+        steps.push(`Determinant of [${matrix[0][0]}] is ${matrix[0][0]}`);
+        return matrix[0][0];
+    }
+    if (matrix.length === 2) {
+        const det = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+        steps.push(`Determinant of 2x2 matrix: ${matrix[0][0]} * ${matrix[1][1]} - ${matrix[0][1]} * ${matrix[1][0]} = ${det}`);
+        return det;
+    }
+
+    let det = 0;
+    for (let i = 0; i < matrix[0].length; i++) {
+        const subMatrix = matrix.slice(1).map(row => row.filter((_, index) => index !== i));
+        const subDet = getDeterminant(subMatrix, steps);
+        det += matrix[0][i] * subDet * (i % 2 === 0 ? 1 : -1);
+        steps.push(`Adding: ${matrix[0][i]} * ${subDet} * ${i % 2 === 0 ? 1 : -1}`);
+    }
+    steps.push(`Determinant: ${det}`);
+    return det;
+}
+
+function performMatrixInverse() {
+    const matrix = parseMatrix(document.getElementById('inverse-matrix').value);
+   
+    // Check if the matrix is square
+    if (matrix.length === 0 || matrix.length !== matrix[0].length) {
+        document.getElementById('matrix-inverse-result').innerText = 'Matrix must be square!';
+        return;
+    }
+
+    const steps = [];
+    const inverse = getMatrixInverse(matrix, steps);
+   
+    if (inverse) {
+        document.getElementById('matrix-inverse-result').innerText = `Inverse: ${JSON.stringify(inverse)}`;
+    } else {
+        document.getElementById('matrix-inverse-result').innerText = 'Matrix is not invertible!';
+    }
+   
+    document.getElementById('matrix-inverse-steps').innerText = steps.join('\n');
+}
+
+function getMatrixInverse(matrix, steps) {
+    const n = matrix.length;
+
+    // Create an identity matrix
+    const identity = matrix.map((row, i) => {
+        const identityRow = Array(n).fill(0);
+        identityRow[i] = 1;
+        return identityRow;
+    });
+
+    // Augment the matrix with the identity matrix
+    const augmented = matrix.map((row, i) => [...row, ...identity[i]]);
+
+    for (let i = 0; i < n; i++) {
+        let pivot = augmented[i][i];
+       
+        // Check for zero pivot
+        if (pivot === 0) {
+            let found = false;
+            for (let j = i + 1; j < n; j++) {
+                if (augmented[j][i] !== 0) {
+                    [augmented[i], augmented[j]] = [augmented[j], augmented[i]];
+                    pivot = augmented[i][i];
+                    found = true;
+                    steps.push(`Swapping rows ${i} and ${j}`);
+                    break;
+                }
+            }
+            if (!found) return null; // Matrix is not invertible
+        }
+
+        // Normalize the pivot row
+        for (let j = 0; j < augmented[i].length; j++) {
+            augmented[i][j] /= pivot;
+        }
+        steps.push(`Normalizing row ${i}: ${augmented[i].join(', ')}`);
+
+        // Eliminate other rows
+        for (let j = 0; j < n; j++) {
+            if (j !== i) {
+                const factor = augmented[j][i];
+                for (let k = 0; k < augmented[i].length; k++) {
+                    augmented[j][k] -= factor * augmented[i][k];
+                }
+                steps.push(`Eliminating row ${j} using row ${i}: ${augmented[j].join(', ')}`);
+            }
+        }
+    }
+
+    // Extract the right half of the augmented matrix as the inverse
+    const inverseMatrix = augmented.map(row => row.slice(n));
+    return inverseMatrix;
+}
+
+        function logout() {
+            localStorage.removeItem('user'); 
+            window.location.href = 'Registration.html'; 
+        }
