@@ -1,4 +1,4 @@
-# Web-Linear-Algebra-Calculator
+# Linear Algebra Calculator
 
 Welcome to the Linear Algebra Calculator repository! 
 This project provides a web-based application designed to perform linear algebra operations, including calculations for vectors, matrices, and complex numbers.
